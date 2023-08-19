@@ -1,47 +1,50 @@
-<script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+<script>
+  export default {
+    data: () => ({
+      tempTypeList: [],
+      tempRegionList: [],
+      typeList: ['normal', 'grass', 'water', 'fire', 'electric', 'ground', 'flying', 'rock', 'bug', 'ghost', 'poison', 'fighting', 'psychic', 'ice', 'dragon', 'steel', 'dark', 'fairy'],
+      regionList: ['kanto', 'johto', 'hoenn', 'sinnoh', 'unova', 'kalos', 'alola', 'galar', 'paldea']
+    }),
+    methods: {
+      getRandomTypes: function() {
+        let n;
+        this.tempTypeList = [];
+        for(var a=0; a < 6; a++) {
+          n = Math.floor(Math.random() * this.typeList.length);
+          this.tempTypeList.push(this.typeList[n])
+        }
+      }
+    }
+  }
+
+// TODO: https://pokeapi.co/api/v2/pokemon -> .count
+// TODO https://pokeapi.co/api/v2/pokemon/1
 </script>
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
+    <h1>Pokemon Team Builder</h1>
   </header>
 
   <main>
-    <TheWelcome />
+    <h2>Types</h2>
+    <ol>
+      <li v-for="(type, index) in typeList" :key="`type-${index}`">{{ type }}</li>
+    </ol>
+    <h2>Regions</h2>
+    <ol>
+      <li v-for="(region, index) in regionList" :key="`region-${index}`">{{ region }}</li>
+    </ol>
+
+    <button @click="getRandomTypes">Generate types</button>
+
+    <p v-if="!tempTypeList.length">No type list generated yet.</p>
+    <ul v-else>
+      <li v-for="(temp, index) in tempTypeList" :key="`temp-type-${index}`">{{ temp }}</li>
+    </ul>
   </main>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-}
 </style>
