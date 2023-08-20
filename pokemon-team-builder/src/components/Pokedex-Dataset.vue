@@ -85,11 +85,12 @@
 </script>
 
 <template>
-  <button @click="generateTeam">Generate Pokemon Team</button>
-
-  <p v-if="!currentTeamList.length">No team generated yet.</p>
-  <ul v-else>
-    <!-- make this a "slot" for a card? -->
-    <li v-for="(member, index) in currentTeamList" :key="`member-${index}`">{{ this.capitalize(member?.name) }} {{ this.createTypeBadges(member?.types) }}  <img class="sprite-image" :src="member?.sprites?.front_default" /></li>
-  </ul>
+  <button class="bg-indigo-500 rounded-full py-2 px-4 mb-3 text-white" @click="generateTeam">Generate Pokemon Team</button>
+  <div class="p-4 my-4 border-2 border-indigo-300">
+    <p v-if="!currentTeamList.length">No team generated yet.</p>
+    <ul v-else>
+      <!-- make this a "slot" for a card? -->
+      <li v-for="(member, index) in currentTeamList" :key="`member-${index}`">{{ this.capitalize(member?.name) }} {{ this.createTypeBadges(member?.types) }}  <img class="sprite-image" :src="member?.sprites?.front_default" /></li>
+    </ul>
+  </div>
 </template>
