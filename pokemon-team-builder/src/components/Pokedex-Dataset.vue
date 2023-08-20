@@ -1,16 +1,26 @@
 <script>
   export default {
+    props: {
+      teamSize: [Number, String],
+      regionFilters: Array,
+      typeFilters: Array,
+      regionList: String,
+      typeList: String
+    },
     data: () => ({
       currentTeamList: [],
-      pokedex: [],
-      teamSize: 6,
-      regionFilters: [],
-      typeFilters: []
+      pokedex: []
     }),
     methods: {
+      capitalize: function(string) {
+        if (!string) { return '' }
+        const firstChar = string[0].toUpperCase();
+        const remainder = string.slice(1);
+        return firstChar + remainder;
+      },
       choosePokemonByType: function(type) {
         console.log(`looking for ${type} types`);
-        const typedPokemon = pokedex.filter(function(mon) {
+        const typedPokemon = this.pokedex.filter(function(mon) {
           return mon.types[0]?.type?.name === type || mon.types[1]?.type?.name === type;
         });
         console.log(`found these for ${type} types`, typedPokemon);
@@ -26,7 +36,7 @@
         return template;
       },
       async fetchPokedex() {
-          const initialRecord = {count: 5}; // for debugging until we get the caching stored
+          const initialRecord = {count: 50}; // for debugging until we get the caching stored
           //const initialRecord = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1', { cache: "force-cache" }).then((response) => response.json())
           // get the full list by the current total count
           await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${initialRecord.count}`, { cache: "force-cache" })
@@ -47,12 +57,15 @@
       },
       generateTeam: function() {
         let n;
+        // use the filtered list if it's not empty; if it is empty, then use the full list
+        let typeFiltersArray = this.typeFilters.length ? this.typeFilters : this.typeList.split(',');
+        //let regionFiltersArray = this.regionFilters.length ? this.regionFilters : this.regionList.split(',');
         this.currentTeamList = [];
         // TODO: make the type filters pre-filter the list so we don't pick missing types
         // TODO: change this to do/while and increment when we're sure we found a matching type (they can turn off types)
-        for(var a=0; a < this.teamSize; a++) {
-          n = Math.floor(Math.random() * this.typeList.length);
-          let newChoice = this.choosePokemonByType(this.typeList[n]);
+        for(var a=0; a < Number(this.teamSize); a++) {
+          n = Math.floor(Math.random() * typeFiltersArray.length);
+          let newChoice = this.choosePokemonByType(typeFiltersArray[n]);
           let currentTeammate = this.currentTeamList.find(function(mon) { return mon.name === newChoice.name });
           if (newChoice) {
             if (currentTeammate) {

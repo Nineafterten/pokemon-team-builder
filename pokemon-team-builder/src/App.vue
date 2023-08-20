@@ -4,6 +4,7 @@
     data: () => ({
       teamSize: 6,
       regionFilters: [],
+      isAllTypesChecked: false,
       typeFilters: [],
       typeList: ['normal', 'grass', 'water', 'fire', 'electric', 'ground', 'flying', 'rock', 'bug', 'ghost', 'poison', 'fighting', 'psychic', 'ice', 'dragon', 'steel', 'dark', 'fairy'],
       regionList: ['kanto', 'johto', 'hoenn', 'sinnoh', 'unova', 'kalos', 'alola', 'galar', 'paldea']
@@ -17,6 +18,23 @@
         const firstChar = string[0].toUpperCase();
         const remainder = string.slice(1);
         return firstChar + remainder;
+      },
+      toggleAllTypeFilters: function() {
+        this.isAllTypesChecked = !this.isAllTypesChecked;
+        this.typeFilters = [];
+        if (this.isAllTypesChecked) {
+          for (var key in this.typeList) {
+            this.typeFilters.push(this.typeList[key]);
+          }
+        }
+      },
+      updateIsAllTypesChecked: function() {
+        // watch for the 'check all' indicator
+        if (this.typeFilters.length === this.typeList.length) {
+          this.isAllTypesChecked = true;
+        } else {
+          this.isAllTypesChecked = false;
+        }
       }
     }
   }
@@ -31,6 +49,8 @@
   7 - add "limit to mega evolutions" option?
   8 - build display of team
   9 - allow "save" teams; up to 10 teams generated?
+  10 - utility for things like "capitalize" so not repeating methods
+
 */
 </script>
 
@@ -48,16 +68,23 @@
       <option>6</option>
     </select>
     <h2>Element Types</h2>
+    <label><b><input type="checkbox" @click="toggleAllTypeFilters" v-model="isAllTypesChecked" />Toggle All Types</b></label>
     <ol>
-      <li v-for="(type, index) in typeList" :key="`type-${index}`"><label><input type="checkbox" checked="checked" />{{ this.capitalize(type) }}</label></li>
+      <li v-for="(type, index) in typeList" :key="`type-${index}`"><label><input type="checkbox" :value="type" v-model="typeFilters" @change="updateIsAllTypesChecked" />{{ this.capitalize(type) }}</label></li>
     </ol>
     <h2>Native Regions</h2>
     <ol>
-      <li v-for="(region, index) in regionList" :key="`region-${index}`"><label><input type="checkbox" checked="checked" />{{ this.capitalize(region) }}</label></li>
+      <li v-for="(region, index) in regionList" :key="`region-${index}`"><label><input type="checkbox" />{{ this.capitalize(region) }}</label></li>
     </ol>
   </main>
   <Suspense>
-    <Pokedex :team-size="teamSize" :region-filters="regionFilters" :type-filters="typeFilters" />
+    <Pokedex 
+      :team-size="teamSize" 
+      :region-filters="regionFilters" 
+      :type-filters="typeFilters" 
+      type-list="{{typeList}}"
+      region-list="{{regionList}}"
+    />
     <!-- add spinning pokeball icon here? -->
     <template v-slot:fallback>
       Loading Pokedex...
