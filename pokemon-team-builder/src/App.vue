@@ -3,9 +3,8 @@
   export default {
     data: () => ({
       teamSize: 6,
-      currentTeamList: [],
       regionFilters: [],
-      typeFitlers: [],
+      typeFilters: [],
       typeList: ['normal', 'grass', 'water', 'fire', 'electric', 'ground', 'flying', 'rock', 'bug', 'ghost', 'poison', 'fighting', 'psychic', 'ice', 'dragon', 'steel', 'dark', 'fairy'],
       regionList: ['kanto', 'johto', 'hoenn', 'sinnoh', 'unova', 'kalos', 'alola', 'galar', 'paldea']
     }),
@@ -18,46 +17,7 @@
         const firstChar = string[0].toUpperCase();
         const remainder = string.slice(1);
         return firstChar + remainder;
-      },
-      choosePokemonByType: function(type) {
-        console.log(`looking for ${type} types`);
-        const typedPokemon = this.pokedex.filter(function(mon) {
-          return mon.types[0]?.type?.name === type || mon.types[1]?.type?.name === type;
-        });
-        console.log(`found these for ${type} types`, typedPokemon);
-        return typedPokemon.length ? typedPokemon[Math.floor(Math.random() * typedPokemon.length)] : {};
-      },
-      // TODO: Probably supposed to be a component with a slot? Need to research...
-      createTypeBadges: function(types) {
-        types = Array.isArray(types) ? types : [];
-        let template = '';
-        types.forEach(function(type) {
-          template += `<span class="type_${type.type.name}">${type.type.name}</span>`;
-        })
-        return template;
-      },
-      generateTeam: function() {
-        let n;
-        this.currentTeamList = [];
-        // TODO: make the type filters pre-filter the list so we don't pick missing types
-        // TODO: change this to do/while and increment when we're sure we found a matching type (they can turn off types)
-        for(var a=0; a < this.teamSize; a++) {
-          n = Math.floor(Math.random() * this.typeList.length);
-          let newChoice = this.choosePokemonByType(this.typeList[n]);
-          let currentTeammate = this.currentTeamList.find(function(mon) { return mon.name === newChoice.name });
-          if (newChoice) {
-            if (currentTeammate) {
-              console.log(`Skipping ${ newChoice.name} - they are already on the team!`);
-            } else {
-              this.currentTeamList.push(newChoice);
-            }
-          }
-        }
-        console.log('chosen team', this.currentTeamList);
       }
-    },
-    created() {
-      console.log('Created', this.pokedex);
     }
   }
 
@@ -78,13 +38,6 @@
   <header>
     <h1>Pokemon Team Builder</h1>
   </header>
-  <Suspense>
-    <Pokedex />
-    <!-- add spinning pokeball icon here? -->
-    <template v-slot:fallback>
-      Loading Pokedex...
-    </template>
-  </Suspense>
   <main>
     <h2>Team Size</h2>
     <select v-model="teamSize">
@@ -102,15 +55,14 @@
     <ol>
       <li v-for="(region, index) in regionList" :key="`region-${index}`"><label><input type="checkbox" checked="checked" />{{ this.capitalize(region) }}</label></li>
     </ol>
-
-    <button @click="generateTeam">Generate Pokemon Team</button>
-
-    <p v-if="!currentTeamList.length">No team generated yet.</p>
-    <ul v-else>
-      <!-- make this a "slot" for a card? -->
-      <li v-for="(member, index) in currentTeamList" :key="`member-${index}`">{{ this.capitalize(member?.name) }} {{ this.createTypeBadges(member?.types) }}  <img class="sprite-image" :src="member?.sprites?.front_default" /></li>
-    </ul>
   </main>
+  <Suspense>
+    <Pokedex :team-size="teamSize" :region-filters="regionFilters" :type-filters="typeFilters" />
+    <!-- add spinning pokeball icon here? -->
+    <template v-slot:fallback>
+      Loading Pokedex...
+    </template>
+  </Suspense>
 </template>
 
 <style scoped>
