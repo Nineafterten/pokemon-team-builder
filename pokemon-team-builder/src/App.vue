@@ -122,7 +122,7 @@
     <p v-if="!currentTeamList.length">No team generated yet.</p>
     <ul v-else>
       <!-- make this a "slot" for a card? -->
-      <li v-for="(member, index) in currentTeamList" :key="`member-${index}`">{{ this.capitalize(member?.name) }} {{ this.createTypeBadges(member?.types) }}</li>
+      <li v-for="(member, index) in currentTeamList" :key="`member-${index}`">{{ this.capitalize(member?.name) }} {{ this.createTypeBadges(member?.types) }}  <img class="sprite-image" :src="member?.sprites?.front_default" /></li>
     </ul>
   </main>
 </template>
