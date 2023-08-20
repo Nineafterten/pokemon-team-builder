@@ -1,13 +1,17 @@
 <script>
+  import Pokedex from './components/Pokedex-Dataset.vue';
   export default {
     data: () => ({
-      pokedex: [],
-      tempTeamLimit: 6,
+      teamSize: 6,
       currentTeamList: [],
-      tempRegionList: [],
+      regionFilters: [],
+      typeFitlers: [],
       typeList: ['normal', 'grass', 'water', 'fire', 'electric', 'ground', 'flying', 'rock', 'bug', 'ghost', 'poison', 'fighting', 'psychic', 'ice', 'dragon', 'steel', 'dark', 'fairy'],
       regionList: ['kanto', 'johto', 'hoenn', 'sinnoh', 'unova', 'kalos', 'alola', 'galar', 'paldea']
     }),
+    components: {
+      Pokedex
+    },
     methods: {
       capitalize: function(string) {
         if (!string) { return '' }
@@ -37,7 +41,7 @@
         this.currentTeamList = [];
         // TODO: make the type filters pre-filter the list so we don't pick missing types
         // TODO: change this to do/while and increment when we're sure we found a matching type (they can turn off types)
-        for(var a=0; a < this.tempTeamLimit; a++) {
+        for(var a=0; a < this.teamSize; a++) {
           n = Math.floor(Math.random() * this.typeList.length);
           let newChoice = this.choosePokemonByType(this.typeList[n]);
           let currentTeammate = this.currentTeamList.find(function(mon) { return mon.name === newChoice.name });
@@ -50,33 +54,9 @@
           }
         }
         console.log('chosen team', this.currentTeamList);
-      },
-      async fetchPokemon() {
-        const initialRecord = {count: 50}; // for debugging until we get the caching stored
-        //const initialRecord = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1', { cache: "force-cache" }).then((response) => response.json())
-        // get the full list by the current total count
-        await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${initialRecord.count}`, { cache: "force-cache" })
-          .then(response => response.json())
-          .then(response => {
-            response.results.forEach((pokemon) => {
-              // get the details for each pokemon so we can sort/filter by type, region, etc.
-              fetch(`${pokemon.url}`, { cache: "force-cache" })
-                .then(details => details.json())              
-                .then((details) => {
-                  this.pokedex.push(Object.assign( {}, pokemon, details));
-              })
-            })
-          })
-          .catch((err) => {
-            console.error(err);
-          })
       }
     },
-    beforeCreate() {
-      console.log('Before create', this.pokedex);
-    },
     created() {
-      this.fetchPokemon()
       console.log('Created', this.pokedex);
     }
   }
@@ -98,10 +78,16 @@
   <header>
     <h1>Pokemon Team Builder</h1>
   </header>
-
+  <Suspense>
+    <Pokedex />
+    <!-- add spinning pokeball icon here? -->
+    <template v-slot:fallback>
+      Loading Pokedex...
+    </template>
+  </Suspense>
   <main>
     <h2>Team Size</h2>
-    <select v-model="tempTeamLimit">
+    <select v-model="teamSize">
       <option>2</option>
       <option>3</option>
       <option>4</option>
