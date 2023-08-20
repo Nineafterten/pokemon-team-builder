@@ -4,7 +4,7 @@
     data: () => ({
       teamSize: 6,
       regionFilters: [],
-      isAllTypesChecked: false,
+      isAllTypesChecked: true,
       typeFilters: [],
       typeList: ['normal', 'grass', 'water', 'fire', 'electric', 'ground', 'flying', 'rock', 'bug', 'ghost', 'poison', 'fighting', 'psychic', 'ice', 'dragon', 'steel', 'dark', 'fairy'],
       regionList: ['kanto', 'johto', 'hoenn', 'sinnoh', 'unova', 'kalos', 'alola', 'galar', 'paldea']
@@ -70,7 +70,17 @@
     <h2>Element Types</h2>
     <label><b><input type="checkbox" @click="toggleAllTypeFilters" v-model="isAllTypesChecked" />Toggle All Types</b></label>
     <ol>
-      <li v-for="(type, index) in typeList" :key="`type-${index}`"><label><input type="checkbox" :value="type" v-model="typeFilters" @change="updateIsAllTypesChecked" />{{ this.capitalize(type) }}</label></li>
+      <li v-for="(type, index) in typeList" :key="`type-${index}`">
+        <label>
+          <input 
+            type="checkbox" 
+            :value="type" 
+            v-model="typeFilters" 
+            checked="{{ isAllTypesChecked }}"
+            @change="updateIsAllTypesChecked" 
+          />{{ this.capitalize(type) }}
+        </label>
+      </li>
     </ol>
     <h2>Native Regions</h2>
     <ol>
