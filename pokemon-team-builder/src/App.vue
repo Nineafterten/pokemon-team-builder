@@ -9,6 +9,11 @@
       regionList: ['kanto', 'johto', 'hoenn', 'sinnoh', 'unova', 'kalos', 'alola', 'galar', 'paldea']
     }),
     methods: {
+      capitalize: function(string) {
+        const firstChar = string[0].toUpperCase();
+        const remainder = string.slice(1);
+        return firstChar + remainder;
+      },
       generateTeam: function() {
         this.getRandomTypes();
       },
@@ -24,7 +29,8 @@
         return '';
       },
       async fetchPokemon() {
-        this.pokedex = await fetch('https://pokeapi.co/api/v2/pokemon?limit=151').then((response) => response.json())
+        const initialRecord = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1', { cache: "force-cache" }).then((response) => response.json())
+        this.pokedex = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${initialRecord.count}`, { cache: "force-cache" }).then((response) => response.json())
       }
     },
     beforeCreate() {
@@ -59,7 +65,9 @@
 
   <main>
     <button @click="fetchPokemon">Fetch Pokemon</button>
-    <pre>{{ pokedex }}</pre>
+    <div class="scroll-container">
+      <pre>{{ pokedex }}</pre>
+    </div>
     <h2>Team Size</h2>
     <select v-model="tempTeamLimit">
       <option>2</option>
@@ -70,21 +78,27 @@
     </select>
     <h2>Element Types</h2>
     <ol>
-      <li v-for="(type, index) in typeList" :key="`type-${index}`"><label><input type="checkbox" checked="checked" />{{ type }}</label></li>
+      <li v-for="(type, index) in typeList" :key="`type-${index}`"><label><input type="checkbox" checked="checked" />{{ this.capitalize(type) }}</label></li>
     </ol>
     <h2>Native Regions</h2>
     <ol>
-      <li v-for="(region, index) in regionList" :key="`region-${index}`"><label><input type="checkbox" checked="checked" />{{ region }}</label></li>
+      <li v-for="(region, index) in regionList" :key="`region-${index}`"><label><input type="checkbox" checked="checked" />{{ this.capitalize(region) }}</label></li>
     </ol>
 
     <button @click="generateTeam">Generate Pokemon Team</button>
 
     <p v-if="!tempTypeList.length">No team generated yet.</p>
     <ul v-else>
-      <li v-for="(temp, index) in tempTypeList" :key="`temp-type-${index}`">{{ temp }}</li>
+      <li v-for="(temp, index) in tempTypeList" :key="`temp-type-${index}`">{{ this.capitalize(temp) }}</li>
     </ul>
   </main>
 </template>
 
 <style scoped>
+.scroll-container {
+  height: 300px;
+  overflow: scroll;
+  outline: 1px solid gray;
+  background: #ccc;  
+}
 </style>
