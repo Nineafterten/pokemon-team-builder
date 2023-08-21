@@ -1,13 +1,15 @@
 <script>
-  import Pokedex from './components/Pokedex-Dataset.vue';
+  import Pokedex from './components/Pokedex-Container.vue';
+  import { typeList } from './composables/typeList';
+  import { regionList } from './composables/regionList';
   export default {
     data: () => ({
       teamSize: 6,
       regionFilters: [],
       isAllTypesChecked: false,
       typeFilters: [],
-      typeList: ['normal', 'grass', 'water', 'fire', 'electric', 'ground', 'flying', 'rock', 'bug', 'ghost', 'poison', 'fighting', 'psychic', 'ice', 'dragon', 'steel', 'dark', 'fairy'],
-      regionList: ['kanto', 'johto', 'hoenn', 'sinnoh', 'unova', 'kalos', 'alola', 'galar', 'paldea']
+      typeList: typeList,
+      regionList: regionList
     }),
     components: {
       Pokedex
@@ -97,9 +99,7 @@
     <Pokedex 
       :team-size="teamSize" 
       :region-filters="regionFilters" 
-      :type-filters="typeFilters" 
-      type-list="{{typeList}}"
-      region-list="{{regionList}}"
+      :type-filters="typeFilters"
     />
     <!-- add spinning pokeball icon here? -->
     <template v-slot:fallback>

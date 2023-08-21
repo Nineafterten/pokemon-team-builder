@@ -1,5 +1,7 @@
 <script setup>
-  import { reactive, defineProps } from "vue";
+  import { reactive, defineProps } from 'vue';
+  import { typeList } from '../composables/typeList';
+  import { regionList } from '../composables/regionList';
   const state = reactive({
       currentTeamList: [],
       pokedex: []
@@ -7,12 +9,11 @@
   const props = defineProps({
       teamSize: [Number, String],
       regionFilters: Array,
-      typeFilters: Array,
-      regionList: String,
-      typeList: String
+      typeFilters: Array
   });
+  
   async function fetchPokemon() {
-      const initialRecord = {count: 50}; // for debugging until we get the caching stored
+      const initialRecord = {count: 20}; // for debugging until we get the caching stored
       //const initialRecord = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1', { cache: "force-cache" }).then((response) => response.json())
       // get the full list by the current total count
       await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${initialRecord.count}`, { cache: "force-cache" })
@@ -41,6 +42,7 @@
     const remainder = string.slice(1);
     return firstChar + remainder;
   }
+
   function choosePokemonByType(type) {
     console.log(`looking for ${type} types`);
     const typedPokemon = state.pokedex.filter(function(mon) {
@@ -49,6 +51,7 @@
     console.log(`found these for ${type} types`, typedPokemon);
     return typedPokemon.length ? typedPokemon[Math.floor(Math.random() * typedPokemon.length)] : {};
   }
+
   // TODO: Probably supposed to be a component with a slot? Need to research...
   function createTypeBadges(types) {
     types = Array.isArray(types) ? types : [];
@@ -58,11 +61,12 @@
     })
     return template;
   }
+
   function generateTeam() {
     let n;
     // use the filtered list if it's not empty; if it is empty, then use the full list
-    let typeFiltersArray = props.typeFilters.length ? props.typeFilters : props.typeList.split(',');
-    //let regionFiltersArray = props.regionFilters.length ? props.regionFilters : props.regionList.split(',');
+    let typeFiltersArray = props.typeFilters.length ? props.typeFilters : typeList;
+    let regionFiltersArray = props.regionFilters.length ? props.regionFilters : regionList;
     state.currentTeamList = [];
     // TODO: make the type filters pre-filter the list so we don't pick missing types
     // TODO: change this to do/while and increment when we're sure we found a matching type (they can turn off types)
