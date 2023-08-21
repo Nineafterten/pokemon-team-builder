@@ -1,5 +1,6 @@
 <script>
   import Pokedex from './components/Pokedex-Container.vue';
+  import { capitalize } from './composables/capitalize';
   import { typeList } from './composables/typeList';
   import { regionList } from './composables/regionList';
   export default {
@@ -8,6 +9,7 @@
       regionFilters: [],
       isAllTypesChecked: false,
       typeFilters: [],
+      capitalize: capitalize,
       typeList: typeList,
       regionList: regionList
     }),
@@ -15,12 +17,7 @@
       Pokedex
     },
     methods: {
-      capitalize: function(string) {
-        if (!string) { return '' }
-        const firstChar = string[0].toUpperCase();
-        const remainder = string.slice(1);
-        return firstChar + remainder;
-      },
+      
       toggleAllTypeFilters: function() {
         this.isAllTypesChecked = !this.isAllTypesChecked;
         this.typeFilters = [];
@@ -42,17 +39,13 @@
   }
 
 /* NOTES
-  1 - ensure caching and or do local storage (endpoint spamming right now for testing)
-  2 - add Tailwind CSS for styling?
-  3 - add 'ban' option for pokemon user doesn't like (exclusion list)
-  4 - sort/filter by element type
-  5 - sort/fiter by region
-  6 - add exclusions for duplicates/evolutions of same type (add a "allow evolutions" toggle)
-  7 - add "limit to mega evolutions" option?
-  8 - build display of team
-  9 - allow "save" teams; up to 10 teams generated?
-  10 - utility for things like "capitalize" so not repeating methods
-
+  - ensure caching and or do local storage (endpoint spamming right now for testing)
+  - add 'ban' option for pokemon user doesn't like (exclusion list)
+  - fiter by region
+  - add exclusions for duplicates/evolutions of same type (add a "allow evolutions" toggle)
+  - add "limit to mega evolutions" option?
+  - build display of team
+  - allow "save" teams; up to 10 teams generated?
 */
 </script>
 
