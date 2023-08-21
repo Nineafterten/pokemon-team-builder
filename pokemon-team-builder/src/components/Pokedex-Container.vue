@@ -2,6 +2,7 @@
   import { reactive, defineProps } from 'vue';
   import { typeList } from '../composables/typeList';
   import { regionList } from '../composables/regionList';
+  import TypePill from './Element-Type-Pill.vue';
   const state = reactive({
       currentTeamList: [],
       pokedex: []
@@ -52,21 +53,11 @@
     return typedPokemon.length ? typedPokemon[Math.floor(Math.random() * typedPokemon.length)] : {};
   }
 
-  // TODO: Probably supposed to be a component with a slot? Need to research...
-  function createTypeBadges(types) {
-    types = Array.isArray(types) ? types : [];
-    let template = '';
-    types.forEach(function(type) {
-      template += `<span class="type_${type.type.name}">${type.type.name}</span>`;
-    })
-    return template;
-  }
-
   function generateTeam() {
     let n;
     // use the filtered list if it's not empty; if it is empty, then use the full list
     let typeFiltersArray = props.typeFilters.length ? props.typeFilters : typeList;
-    let regionFiltersArray = props.regionFilters.length ? props.regionFilters : regionList;
+    //let regionFiltersArray = props.regionFilters.length ? props.regionFilters : regionList;
     state.currentTeamList = [];
     // TODO: make the type filters pre-filter the list so we don't pick missing types
     // TODO: change this to do/while and increment when we're sure we found a matching type (they can turn off types)
@@ -90,9 +81,14 @@
   <button class="bg-indigo-500 rounded-full py-2 px-4 mb-3 text-white" @click="generateTeam">Generate Pokemon Team</button>
   <div class="p-4 my-4 border-2 border-indigo-300">
     <p v-if="!state.currentTeamList.length">No team generated yet.</p>
-    <ul v-else>
+    <ul v-else class="grid grid-cols-3 gap-2">
       <!-- make this a "slot" for a card? -->
-      <li v-for="(member, index) in state.currentTeamList" :key="`member-${index}`">{{ capitalize(member?.name) }} {{ createTypeBadges(member?.types) }}  <img class="sprite-image" :src="member?.sprites?.front_default" /></li>
+      <li class="bg-indigo-100 p-3" v-for="(member, index) in state.currentTeamList" :key="`member-${index}`">
+        <img class="float-right bg-white rounded-full" :src="member?.sprites?.front_default" />
+        <h4 class="text-lg">{{ capitalize(member?.name) }}</h4> 
+        <TypePill v-if="member?.types[0]" :type="member?.types[0].type.name" />
+        <TypePill v-if="member?.types[1]" :type="member?.types[1].type.name" />
+      </li>
     </ul>
   </div>
 </template>
