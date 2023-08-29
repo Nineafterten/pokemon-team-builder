@@ -1,9 +1,17 @@
 <script>
-  import Pokedex from './components/Pokedex-Container.vue';
+  import { createApp } from 'vue'
+  import { createPinia } from 'pinia';
   import { capitalize } from './composables/capitalize';
   import { typeList } from './composables/typeList';
   import { regionList } from './composables/regionList';
   import { bgColorMap, textColorMap } from './composables/typeList';
+  import Pokedex from './components/Pokedex-Container.vue';
+  
+  // why do I need to do this? Because Vue said so?
+  const pinia = createPinia();
+  const app = createApp();
+  app.use(pinia);
+
   export default {
     data: () => ({
       teamSize: 6,
